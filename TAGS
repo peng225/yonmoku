@@ -1,0 +1,61 @@
+
+ai.d,708
+import std.stdio,stdio1,0
+import std.stdio, std.algorithm,algorithm1,0
+import std.stdio, std.algorithm, std.conv,conv1,0
+import std.stdio, std.algorithm, std.conv, std.math,math1,0
+import std.stdio, std.algorithm, std.conv, std.math, std.random;random1,0
+import field;2,65
+struct Place4,80
+  int x;6,95
+  int n;7,104
+  double reward;8,113
+  double ucb;9,130
+  this(14,243
+  int opCmp(20,320
+  int opEqauls(25,395
+class AI31,476
+  private int num_playout;AI::num_playout33,487
+  private immutable double draw_reward;AI::draw_reward34,514
+  private double playout(AI::playout36,555
+  this(AI::this64,1040
+  void setNumPlayout(AI::setNumPlayout70,1132
+  int play(AI::play75,1217
+
+field.d,687
+import std.stdio,stdio1,0
+import std.stdio, std.c.stdlib,stdlib1,0
+import std.stdio, std.c.stdlib, std.algorithm;algorithm1,0
+enum{BLANK,BLANK3,48
+enum{BLANK, RED,3,48
+enum{BLANK, RED, YELLOW}YELLOW3,48
+struct Field5,75
+  private byte[] field_body;7,90
+  private int m_dim;8,119
+  private byte m_turn;9,140
+  private immutable int NUM_MOKU;10,163
+  this(12,200
+  this(20,325
+  private byte get(25,385
+  private void set(29,462
+  @property int dim(33,550
+  @property int turn(34,587
+  void setDim(36,627
+  byte reverseTurn(42,734
+  void show(47,807
+  void clear(77,1273
+  bool put(85,1377
+  bool isWin(113,1927
+  bool isEmpty(211,4204
+  bool isFull(217,4298
+
+main.d,168
+import std.stdio;stdio1,0
+import std.conv;conv2,18
+import std.string;string3,35
+import std.getopt;getopt4,54
+import field;5,73
+import ai;6,87
+void main(8,99
+
+test.d,0
