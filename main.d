@@ -1,9 +1,8 @@
+import std.conv, std.string, std.getopt, std.format, std.array;
 import std.stdio;
-import std.conv;
-import std.string;
-import std.getopt;
 import field;
 import ai;
+import ui;
 
 void main(string[] args)
 {
@@ -14,86 +13,87 @@ void main(string[] args)
   
   Field fd = Field(dim);
   AI ai =  new AI(10000);
-  fd.show();
+  UI ui = new CUI();
+  ui.display(fd);
   while(true){
-    string[] cmd;
-    string tcmd;
-    while((tcmd = chop(readln())) == ""){
+    string[] cmd = ui.input();
+    while(cmd.length == 0){
+      cmd = ui.input();
     }
-    cmd = split(tcmd);
     switch(cmd[0]){
     case "put" :
       if(cmd.length != 2){
-	writeln("Wrong number of argument.");
+	ui.output("Wrong number of argument.");
 	break;
       }
       if(!fd.put(to!int(cmd[1]))){
 	break;
       }      
-      fd.show();
+      ui.display(fd);
       if(fd.isWin(to!int(cmd[1]))){
-	writeln("Player Win!");	
+	ui.output("Player Win!");	
 	fd.clear();
-	writeln("Press any key...");
+	ui.output("Press any key...");
 	readln();
-	fd.show();
+	ui.display(fd);
       }else if(fd.isFull()){
-	writeln("Draw!");
+	ui.output("Draw!");
 	fd.clear();
 	readln();
-	fd.show();
+	ui.display(fd);
       }
       break;
     case "clear":
       fd.clear();
-      fd.show();
+      ui.display(fd);
       break;
-    case "show":
-      fd.show();
+    case "display":
+      ui.display(fd);
       break;
     case "com":
-      int ai_x = ai.play(fd);
-      fd.put(ai_x);
-      fd.show();
-      if(fd.isWin(ai_x)){
-	writeln("Computer Win!");
+      Decision dec = ai.play(fd);
+      fd.put(dec.x);
+      ui.showAIStatus(dec.valid_places);
+      ui.display(fd);
+      if(fd.isWin(dec.x)){
+	ui.output("Computer Win!");
 	fd.clear();
-	writeln("Press any key...");
+	ui.output("Press any key...");
 	readln();
-	fd.show();
+	ui.display(fd);
       }else if(fd.isFull()){
-	writeln("Draw!");
+	ui.output("Draw!");
 	fd.clear();
 	readln();
-	fd.show();
+	ui.display(fd);
       }
       break;
     case "turn":
-      writefln("%s's turn.", fd.turn == RED ? "RED" : "YELLOW");
+      auto outstr = appender!string();
+      formattedWrite(outstr, "%s's turn.", fd.turn == RED ? "RED" : "YELLOW");
+      ui.output(outstr.data);
       break;
     case "dim":
       if(cmd.length == 2){
 	fd.setDim(to!int(cmd[1]));
-	fd.show();
+	ui.display(fd);
       }else{
-	writeln("Wrong number of argument.");
+	ui.output("Wrong number of argument.");
       }
       break;
     case "numpo":
       if(cmd.length == 2){
 	ai.setNumPlayout(to!int(cmd[1]));
       }else{
-	writeln("Wrong number of argument.");
+	ui.output("Wrong number of argument.");
       }
       break;
     case "quit":
       return;
     default:
-      writeln("No such command.");
+      ui.output("No such command.");
       break;
     }
-    writeln("");    
-
-    // ここで勝利判定をしなければならない
+    ui.output("");
   }
 }

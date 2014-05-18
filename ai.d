@@ -1,31 +1,11 @@
-import std.stdio, std.algorithm, std.conv, std.math, std.random;
-import field;
+import std.algorithm, std.conv, std.math, std.random;
+import std.stdio;
+import field, place;
 
-struct Place
+struct Decision
 {
+  Place[int] valid_places;
   int x;
-  int n;
-  double reward;
-  double ucb;
-
-  // @property int n(){return m_n;}
-  // @property double ucb(double val){return m_ucb = val;}
-  
-  this(int x){
-    this.x = x;
-    ucb = double.max;
-    reward = 0.;
-  }
-  
-  int opCmp(ref const Place s) const
-  {
-    return s.ucb < this.ucb;
-  }
-
-  int opEqauls(ref const Place s) const
-  {
-    return s.ucb == this.ucb;
-  }
 }
 
 class AI
@@ -72,7 +52,7 @@ class AI
     this.num_playout = num_playout;
   }
   
-  int play(Field fd)
+  Decision play(Field fd)
   {
     Place[int] valid_places;
     for(int i = 0; i < fd.dim; i++){
@@ -83,22 +63,13 @@ class AI
 
     int num_all_playouts = 0;
     for(int i; i < num_playout; i++){
-      // writefln("%s-th playout.", i);
 
-      // foreach(var; valid_places){
-      // 	writefln("x: %s ucb: %s", var.x, var.ucb);
-      // }
+      auto x = reduce!(max)(valid_places).x;
       
-      // idx == xであることに注意
-      // 本当はこんな気持ち悪いことしたくないんだが...
-      auto idx = reduce!(max)(valid_places).x;
-      // writefln("idx is %s.", idx);
-      
-      double result = playout(fd, idx);
-      // writefln("result is %s.", result);
+      double result = playout(fd, x);
       num_all_playouts++;
-      valid_places[idx].n++;
-      valid_places[idx].reward += result;
+      valid_places[x].n++;
+      valid_places[x].reward += result;
       foreach(ref var; valid_places){
 	if(var.n != 0){
 	  var.ucb = var.reward / var.n
@@ -106,24 +77,14 @@ class AI
 	}
       }
     }
-
-    foreach(i, var; valid_places){
-      writefln("%s %s %s", i, var.n, var.ucb);
-    }
     
-    return reduce!(max)(valid_places).x;
+    Decision dec;
+    dec.valid_places = valid_places;
+    dec.x = reduce!(max)(valid_places).x;    
+    
+    return dec;
   }
 
   unittest{
-    writeln("ai unittest begin.");
-    AI ai = new AI(100);
-    Field fd = Field(5);
-    Field fd2 = fd;
-    fd.put(0);
-    fd.show();
-    auto x = ai.play(fd);
-    fd.put(x);
-    fd.show();
-    writeln("ai unittest end.");
   }
 }

@@ -1,4 +1,5 @@
-import std.stdio, std.c.stdlib, std.algorithm;
+import std.c.stdlib, std.algorithm, std.conv;
+import std.stdio;
 
 enum{BLANK, RED, YELLOW};
 
@@ -14,7 +15,7 @@ struct Field
     this.m_dim = m_dim;
     field_body.length = m_dim^^2;
     m_turn = RED;
-    NUM_MOKU = 4;    
+    NUM_MOKU = 4;
   }
 
   this(this)
@@ -22,7 +23,8 @@ struct Field
     this.field_body = field_body.dup;
   }
 
-  private byte get(int x, int y){
+  // get, setのエラーチェック
+  byte get(int x, int y){
     return field_body[x + m_dim * y];
   }
 
@@ -42,37 +44,7 @@ struct Field
   byte reverseTurn()
   {
     return m_turn == RED ? YELLOW : RED;
-  }
-  
-  void show()
-  {
-    for(int i = 0; i < m_dim; i++){
-      writef(" %s", i);
-    }
-    writeln("");
-    for(int i; i < m_dim; i++){
-      write("|");
-      for(int j; j < m_dim; j++){
-	switch(get(j, i)){
-	case BLANK:
-	  write(" |");
-	  break;
-	case RED:
-	  write("r|");
-	  break;
-	case YELLOW:
-	  write("y|");
-	  break;
-	default:
-	  writeln("Unknown value is included in the field.");
-	  exit(1);
-	  break;
-	}
-      }
-      writeln("");
-    }
-    writeln("");
-  }
+  }  
 
   void clear()
   {
@@ -81,18 +53,15 @@ struct Field
     }
     m_turn = RED;
   }
-  
+
+  // 成功したら0, 失敗したらエラーコードを返すように変更しよう
+  // それにともない、putを呼び出している箇所をすべて修正する必要がある
   bool put(int x)
   {
     if(x < 0 || m_dim <= x){
       writefln("Input position %s is out of range.", x);
       return false;
     }
-
-    // if(m_turn != RED && m_turn != YELLOW){
-    //   writefln("Illegal value %s.", turn);
-    //   return false;
-    // }        
     
     if(get(x, 0) != BLANK){
       writefln("%s-th colum is already full.", x);
@@ -226,18 +195,6 @@ struct Field
 
   unittest
   {
-    // writeln("field unittest begin.");
-    // Field fd = Field(5);
-    // fd.show();
-    // fd.put(0);
-    // fd.show();
-    // fd.put(0);
-    // fd.show();
-    // fd.put(0);
-    // fd.show();
-    // fd.put(0);
-    // fd.show();
-    // writeln("field unittest end.");
-    // writeln("");
+    
   }
 }
