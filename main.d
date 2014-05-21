@@ -12,9 +12,9 @@ void main(string[] args)
 	 );
   
   Field fd = Field(dim);
-  AI ai =  new AI(10000);
-  UI ui = new CUI();
-  ui.display(fd);
+  AI ai =  new AI(10);
+  UI ui = new CUI();  
+  ui.display(fd);  
   while(true){
     string[] cmd = ui.input();
     while(cmd.length == 0){
@@ -43,6 +43,10 @@ void main(string[] args)
 	ui.display(fd);
       }
       break;
+    case "unput" :
+      fd.unput();
+      ui.display(fd);
+      break;
     case "clear":
       fd.clear();
       ui.display(fd);
@@ -56,16 +60,16 @@ void main(string[] args)
       ui.showAIStatus(dec.valid_places);
       ui.display(fd);
       if(fd.isWin(dec.x)){
-	ui.output("Computer Win!");
-	fd.clear();
-	ui.output("Press any key...");
-	readln();
-	ui.display(fd);
+      	ui.output("Computer Win!");
+      	fd.clear();
+      	ui.output("Press any key...");
+      	readln();
+      	ui.display(fd);
       }else if(fd.isFull()){
-	ui.output("Draw!");
-	fd.clear();
-	readln();
-	ui.display(fd);
+      	ui.output("Draw!");
+      	fd.clear();
+      	readln();
+      	ui.display(fd);
       }
       break;
     case "turn":

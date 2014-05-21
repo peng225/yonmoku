@@ -1,27 +1,54 @@
-import std.c.stdlib, std.algorithm, std.conv;
+import std.c.stdlib, std.algorithm, std.conv, std.container, std.random;
 import std.stdio;
 
 enum{BLANK, RED, YELLOW};
 
+// 全体的にエラーチェックが行われていない
 struct Field
 {
   private byte[] field_body;
   private int m_dim;
   private byte m_turn;
   private immutable int NUM_MOKU;
+  private int[] current_top;
+  private SList!(int) history;
   
   this(int m_dim)
   {
     this.m_dim = m_dim;
     field_body.length = m_dim^^2;
     m_turn = RED;
+    current_top.length = m_dim;
+    current_top[] = m_dim;
     NUM_MOKU = 4;
   }
 
-  this(this)
-  {
-    this.field_body = field_body.dup;
+  hash_t toHash(){
+    hash_t hash = 0;
+    Random gen;
+    for(int i = 0; i < m_dim; i++){
+      for(int j = 0; j < m_dim; j++){
+  	hash += get(i, j) * uniform(0, m_dim * m_dim * m_dim, gen);
+      }
+    }
+    return hash;
+    // return reduce!("a + b")(0, field_body);
   }
+
+  bool opEquals(ref Field o)
+  {
+    return this.field_body[] == o.field_body[];
+  }
+
+  int opCmp(ref Field o)
+  {
+    return this.field_body[] >= o.field_body[];
+  }
+
+  // this(this)
+  // {
+  //   this.field_body = field_body.dup;
+  // }
 
   // get, setのエラーチェック
   byte get(int x, int y){
@@ -50,8 +77,25 @@ struct Field
   {
     foreach(ref byte var; field_body){
       var = 0;
-    }
+    }    
+    current_top[] = m_dim;
+    history.clear();
     m_turn = RED;
+  }
+
+  bool unput()
+  {
+    if(history.empty()){
+      writeln("No history exists.");
+      return false;
+    }
+    
+    set(history.front(), current_top[history.front()], BLANK);
+    
+    current_top[history.front()]++;
+    history.removeFront();
+    m_turn = reverseTurn();
+    return true;
   }
 
   // 成功したら0, 失敗したらエラーコードを返すように変更しよう
@@ -67,14 +111,19 @@ struct Field
       writefln("%s-th colum is already full.", x);
       return false;
     }
-        
 
-    for(int i = m_dim - 1; i >= 0; i--){
-      if(get(x, i) == BLANK){
-	set(x, i, m_turn);
-	break;
-      }
-    }
+    // current_topは実際に石が置かれている場所を指すので-1しなければならない
+    set(x, current_top[x] - 1, m_turn);
+
+    // for(int i = m_dim - 1; i >= 0; i--){
+    //   if(get(x, i) == BLANK){
+    // 	set(x, i, m_turn);
+    // 	break;
+    //   }
+    // }
+    
+    current_top[x]--;
+    history.insertFront(x);
     m_turn = reverseTurn();
     return true;
   }
@@ -195,6 +244,33 @@ struct Field
 
   unittest
   {
-    
+    // Field fd = Field(6);
+    // UI cui = new CUI();
+    // fd.put(2);
+    // cui.display(fd);
+    // fd.put(3);
+    // cui.display(fd);
+    // fd.put(0);
+    // cui.display(fd);
+    // fd.unput();
+    // cui.display(fd);
+    // fd.unput();
+    // cui.display(fd);
+    // fd.put(0);
+    // cui.display(fd);
+    // fd.clear();
+    // cui.display(fd);
+    // fd.put(3);
+    // cui.display(fd);
+    // fd.put(3);
+    // cui.display(fd);
+    // fd.unput();
+    // cui.display(fd);
+    // fd.unput();
+    // cui.display(fd);
+    // fd.unput();
+    // cui.display(fd);
+    // fd.unput();
+    // cui.display(fd);
   }
 }

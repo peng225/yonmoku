@@ -1,61 +1,96 @@
 
-ai.d,708
-import std.stdio,stdio1,0
-import std.stdio, std.algorithm,algorithm1,0
-import std.stdio, std.algorithm, std.conv,conv1,0
-import std.stdio, std.algorithm, std.conv, std.math,math1,0
-import std.stdio, std.algorithm, std.conv, std.math, std.random;random1,0
-import field;2,65
-struct Place4,80
-  int x;6,95
-  int n;7,104
-  double reward;8,113
-  double ucb;9,130
-  this(14,243
-  int opCmp(20,320
-  int opEqauls(25,395
-class AI31,476
-  private int num_playout;AI::num_playout33,487
-  private immutable double draw_reward;AI::draw_reward34,514
-  private double playout(AI::playout36,555
-  this(AI::this64,1040
-  void setNumPlayout(AI::setNumPlayout70,1132
-  int play(AI::play75,1217
+ai.d,752
+import std.algorithm,algorithm1,0
+import std.algorithm, std.conv,conv1,0
+import std.algorithm, std.conv, std.math,math1,0
+import std.algorithm, std.conv, std.math, std.random;random1,0
+import std.stdio;stdio2,54
+import field,3,72
+import field, place;3,72
+alias Place[int] Status;5,94
+struct Decision7,120
+  Place[int] valid_places;9,138
+  int x;10,165
+class AI13,177
+  private int num_playout;AI::num_playout15,188
+  private immutable double draw_reward;AI::draw_reward16,215
+  private Status[hash_t] st;AI::st17,255
+  this(AI::this19,285
+  void setNumPlayout(AI::setNumPlayout25,377
+  private double random_playout(AI::random_playout58,1040
+  private double playout(AI::playout83,1576
+  Decision play(AI::play116,2516
 
-field.d,687
-import std.stdio,stdio1,0
-import std.stdio, std.c.stdlib,stdlib1,0
-import std.stdio, std.c.stdlib, std.algorithm;algorithm1,0
-enum{BLANK,BLANK3,48
-enum{BLANK, RED,3,48
-enum{BLANK, RED, YELLOW}YELLOW3,48
-struct Field5,75
-  private byte[] field_body;7,90
-  private int m_dim;8,119
-  private byte m_turn;9,140
-  private immutable int NUM_MOKU;10,163
-  this(12,200
-  this(20,325
-  private byte get(25,385
-  private void set(29,462
-  @property int dim(33,550
-  @property int turn(34,587
-  void setDim(36,627
-  byte reverseTurn(42,734
-  void show(47,807
-  void clear(77,1273
-  bool put(85,1377
-  bool isWin(113,1927
-  bool isEmpty(211,4204
-  bool isFull(217,4298
+field.d,1133
+import std.c.stdlib,stdlib1,0
+import std.c.stdlib, std.algorithm,algorithm1,0
+import std.c.stdlib, std.algorithm, std.conv,conv1,0
+import std.c.stdlib, std.algorithm, std.conv, std.container;container1,0
+import std.stdio;stdio2,61
+import ui;3,79
+enum{BLANK,BLANK5,91
+enum{BLANK, RED,5,91
+enum{BLANK, RED, YELLOW}YELLOW5,91
+class Field8,179
+  private byte[] field_body;Field::field_body10,193
+  private int m_dim;Field::m_dim11,222
+  private byte m_turn;Field::m_turn12,243
+  private immutable int NUM_MOKU;Field::NUM_MOKU13,266
+  private int[] current_top;Field::current_top14,300
+  private SList!(int) history;Field::history15,329
+  this(Field::this17,363
+  byte get(Field::get33,653
+  private void set(Field::set37,722
+  @property int dim(Field::dim41,810
+  @property int turn(Field::turn42,847
+  void setDim(Field::setDim44,887
+  byte reverseTurn(Field::reverseTurn50,994
+  void clear(Field::clear55,1067
+  bool unput(Field::unput65,1221
+  bool put(Field::put82,1706
+  bool isWin(Field::isWin110,2341
+  bool isEmpty(Field::isEmpty208,4618
+  bool isFull(Field::isFull214,4712
 
-main.d,168
-import std.stdio;stdio1,0
-import std.conv;conv2,18
-import std.string;string3,35
-import std.getopt;getopt4,54
-import field;5,73
-import ai;6,87
-void main(8,99
+main.d,354
+import std.conv,conv1,0
+import std.conv, std.string,string1,0
+import std.conv, std.string, std.getopt,getopt1,0
+import std.conv, std.string, std.getopt, std.format,format1,0
+import std.conv, std.string, std.getopt, std.format, std.array;array1,0
+import std.stdio;stdio2,64
+import field;3,82
+import ai;4,96
+import ui;5,107
+void main(7,119
+
+place.d,144
+struct Place1,0
+  int x;3,15
+  int n;4,24
+  double reward;5,33
+  double ucb;6,50
+  this(11,163
+  int opCmp(17,240
+  int opEqauls(22,315
+
+ui.d,652
+import std.stdio,stdio1,0
+import std.stdio, std.string,string1,0
+import std.stdio, std.string, std.conv,conv1,0
+import std.stdio, std.string, std.conv, std.format,format1,0
+import std.stdio, std.string, std.conv, std.format, std.array,array1,0
+import std.stdio, std.string, std.conv, std.format, std.array, std.c.stdlib;stdlib1,0
+import field,2,77
+import field, place;2,77
+  string[] input(6,114
+  void output(7,134
+  void display(8,161
+  void showAIStatus(9,187
+class CUI 12,236
+  string[] input(CUI::input14,253
+  void output(CUI::output24,422
+  void display(CUI::display29,475
+  void showAIStatus(CUI::showAIStatus61,1015
 
 test.d,0
