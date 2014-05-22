@@ -12,7 +12,7 @@ void main(string[] args)
 	 );
   
   Field fd = Field(dim);
-  AI ai =  new AI(10);
+  AI ai =  new AI(5000);
   UI ui = new CUI();  
   ui.display(fd);  
   while(true){
@@ -85,7 +85,7 @@ void main(string[] args)
 	ui.output("Wrong number of argument.");
       }
       break;
-    case "numpo":
+    case "po":
       if(cmd.length == 2){
 	ai.setNumPlayout(to!int(cmd[1]));
       }else{

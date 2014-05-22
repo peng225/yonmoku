@@ -23,24 +23,26 @@ struct Field
     NUM_MOKU = 4;
   }
 
-  hash_t toHash(){
-    hash_t hash = 0;
-    Random gen;
-    for(int i = 0; i < m_dim; i++){
-      for(int j = 0; j < m_dim; j++){
-  	hash += get(i, j) * uniform(0, m_dim * m_dim * m_dim, gen);
-      }
-    }
-    return hash;
-    // return reduce!("a + b")(0, field_body);
-  }
+  // hash_t toHash(){
+  //   // return 0;
+  //   hash_t hash = 0;
+  //   Random gen;
+  //   ulong land_range = m_dim^^4;
+  //   for(int i = 0; i < m_dim; i++){
+  //     for(int j = 0; j < m_dim; j++){
+  // 	hash += get(i, j) * uniform(0, land_range, gen);
+  //     }
+  //   }
+  //   return hash;
+  //   // return reduce!("a + b")(0, field_body);
+  // }
 
-  bool opEquals(ref Field o)
+  bool opEquals(ref const Field o)
   {
     return this.field_body[] == o.field_body[];
   }
 
-  int opCmp(ref Field o)
+  int opCmp(ref const Field o)
   {
     return this.field_body[] >= o.field_body[];
   }
@@ -234,7 +236,7 @@ struct Field
 
   bool isFull()
   {
-    for(int i = 0; i < dim; i++){
+    for(int i = 0; i < m_dim; i++){
       if(isEmpty(i)){
 	return false;
       }
