@@ -1,7 +1,7 @@
 #Makefile
 
-CFLAGS = -unittest -g -m64 -w -wi -O -c
-FINAL_CFLAGS = -unittest -g -m64 -w -wi -O
+CFLAGS = -unittest -gc -m64 -w -wi -O -c
+FINAL_CFLAGS = -unittest -gc -m64 -w -wi -O
 # CFLAGS = -unittest -main -g -m64 -w -wi -O -c
 # FINAL_CFLAGS = -unittest -main -g -m64 -w -wi -O
 BINARY = yonmoku

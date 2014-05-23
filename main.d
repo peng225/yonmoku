@@ -7,12 +7,14 @@ import ui;
 void main(string[] args)
 {
   int dim = 6;
+  int po = 10000;
   getopt(args,
-	 "d",  &dim
+	 "d",  &dim,
+	 "p",  &po
 	 );
   
   Field fd = Field(dim);
-  AI ai =  new AI(5000);
+  AI ai =  new AI(po);
   UI ui = new CUI();  
   ui.display(fd);  
   while(true){
@@ -58,6 +60,9 @@ void main(string[] args)
       Decision dec = ai.play(fd);
       fd.put(dec.x);
       ui.showAIStatus(dec.valid_places);
+      auto outstr = appender!string();
+      formattedWrite(outstr, "Chose %s.", dec.x);
+      ui.output(outstr.data);
       ui.display(fd);
       if(fd.isWin(dec.x)){
       	ui.output("Computer Win!");
