@@ -1,4 +1,5 @@
-import std.conv, std.string, std.getopt, std.format, std.array;
+import std.conv, std.string, std.getopt, std.format,
+  std.array, std.c.stdlib;
 import std.stdio;
 import field;
 import ai;
@@ -28,9 +29,13 @@ void main(string[] args)
 	ui.output("Wrong number of argument.");
 	break;
       }
-      if(!fd.put(to!int(cmd[1]))){
+      try{
+	fd.put(to!int(cmd[1]));
+      }catch(OutOfFieldException e){
 	break;
-      }      
+      }catch(FullColumnException e){
+	break;
+      }
       ui.display(fd);
       if(fd.isWin(to!int(cmd[1]))){
 	ui.output("Player Win!");	
@@ -46,7 +51,11 @@ void main(string[] args)
       }
       break;
     case "unput" :
-      fd.unput();
+      try{
+	fd.unput();
+      }catch(NoHistoryException e){
+	break;
+      }
       ui.display(fd);
       break;
     case "clear":
@@ -58,7 +67,13 @@ void main(string[] args)
       break;
     case "com":
       Decision dec = ai.play(fd);
-      fd.put(dec.x);
+      try{
+	fd.put(dec.x);
+      }catch(OutOfFieldException e){
+	exit(1);
+      }catch(FullColumnException e){
+	exit(1);
+      }
       ui.showAIStatus(dec.valid_places);
       auto outstr = appender!string();
       formattedWrite(outstr, "Chose %s.", dec.x);

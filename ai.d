@@ -1,4 +1,4 @@
-import std.algorithm, std.conv, std.math, std.random, std.datetime;
+import std.algorithm, std.conv, std.math, std.random, std.datetime, std.c.stdlib;
 import std.stdio;
 import field, place;
 import ui;
@@ -14,11 +14,12 @@ struct Decision
   int x;
 }
 
+// エラー処理
+
 class AI
 {
   private int num_playout;  
-  // private Status[hash_t] st;
-    private Status[Field] st;
+  private Status[Field] st;
 
   this(int num_playout)
   {
@@ -40,7 +41,13 @@ class AI
       while(!fd.isEmpty(tx)){
   	tx = uniform(0, fd.dim);
       }
-      fd.put(tx);
+      try{
+	fd.put(tx);
+      }catch(OutOfFieldException e){
+	exit(1);
+      }catch(FullColumnException e){
+	exit(1);
+      }
       num_rplayouts++;
       if(fd.isWin(tx)){
   	if(my_turn == fd.reverseTurn()){
@@ -53,14 +60,21 @@ class AI
       }
     }
     for(int i = 0; i < num_rplayouts; i++){
-      fd.unput();
+      try{
+	fd.unput();
+      }catch(NoHistoryException e){
+	exit(1);
+      }
     }
     // writeln("Random playout done.");
     return result;
   }
   
   private double playout(Field fd, int depth, int num_all_playouts)
-  {
+    out(result){
+      assert(0 <= result);
+    }
+  body{
     assert(to!double(num_playout)/(fd.dim + 1) >= 1);
     if(depth > log(to!double(num_playout)/(fd.dim + 1)) / log(fd.dim)){
       // writeln("Get into random palyout.");
@@ -86,7 +100,13 @@ class AI
       assert(fd in st);
 
       int next_num_all_playouts = st[fd][x].n;
-      assert(fd.put(x));
+      try{
+	fd.put(x);
+      }catch(OutOfFieldException e){
+	exit(1);
+      }catch(FullColumnException e){
+	exit(1);
+      }
 
       double result;
       if(fd.isWin(x)){
@@ -102,7 +122,11 @@ class AI
 	depth++;
 	result = playout(fd, depth, next_num_all_playouts);
       }
-      fd.unput();
+      try{
+	fd.unput();
+      }catch(NoHistoryException e){
+	exit(1);
+      }
       assert(fd in st);
       with(st[fd][x]){
 	n++;

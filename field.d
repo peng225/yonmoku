@@ -1,9 +1,33 @@
-import std.c.stdlib, std.algorithm, std.conv, std.container, std.random;
+import std.c.stdlib, std.algorithm, std.conv,
+  std.container, std.random, std.exception;
 import std.stdio;
 
 enum{BLANK, RED, YELLOW};
 
-// 全体的にエラーチェックが行われていない
+class OutOfFieldException : Exception
+{
+  this(string s, int x){
+    super(s);
+    writefln("%s : %s is out of field.", s, x);
+  }
+}
+
+class FullColumnException : Exception
+{
+  this(string s, int x){
+    super(s);
+    writefln("%s : %s-th colum is already full.", s, x);
+  }
+}
+
+class NoHistoryException : Exception
+{
+  this(string s){
+    super(s);
+    writefln("%s : There is no history any more.", s);
+  }
+}
+
 struct Field
 {
   private byte[] field_body;
@@ -47,17 +71,25 @@ struct Field
     return this.field_body[] >= o.field_body[];
   }
 
-  // this(this)
-  // {
-  //   this.field_body = field_body.dup;
-  // }
-
-  // get, setのエラーチェック
-  byte get(int x, int y){
+  byte get(int x, int y)
+    in{
+      assert(0 <= x && x < m_dim && 0 <= y && y < m_dim);
+    }
+  out(result){
+    assert(result == RED || result == YELLOW
+	   || result == BLANK);
+  }
+  body{
     return field_body[x + m_dim * y];
   }
 
-  private void set(int x, int y, byte var){
+  private void set(int x, int y, byte var)
+    in{
+      assert(0 <= x && x < m_dim);
+      assert(0 <= y && y < m_dim);
+      assert(var == RED || var == YELLOW || var == BLANK);
+    }
+  body{
     field_body[x + m_dim * y] = var;
   }  
 
@@ -85,11 +117,10 @@ struct Field
     m_turn = RED;
   }
 
-  bool unput()
+  void unput()
   {
     if(history.empty()){
-      writeln("No history exists.");
-      return false;
+      throw new NoHistoryException("History error");
     }
     
     set(history.front(), current_top[history.front()], BLANK);
@@ -97,21 +128,18 @@ struct Field
     current_top[history.front()]++;
     history.removeFront();
     m_turn = reverseTurn();
-    return true;
   }
 
-  // 成功したら0, 失敗したらエラーコードを返すように変更しよう
-  // それにともない、putを呼び出している箇所をすべて修正する必要がある
-  bool put(int x)
+  void put(int x)
   {
     if(x < 0 || m_dim <= x){
-      writefln("Input position %s is out of range.", x);
-      return false;
+      throw new OutOfFieldException("Invalid input", x);
+      assert(false);
     }
     
     if(get(x, 0) != BLANK){
-      writefln("%s-th colum is already full.", x);
-      return false;
+      throw new FullColumnException("Invalid input", x);
+      assert(false);
     }
 
     // current_topは実際に石が置かれている場所を指すので-1しなければならない
@@ -127,16 +155,13 @@ struct Field
     current_top[x]--;
     history.insertFront(x);
     m_turn = reverseTurn();
-    return true;
   }
 
   bool isWin(int x)
-  {
-    if(x < 0 || m_dim <= x){
-      writeln("Input position is out of range.");
-      return false;
+    in{
+      assert(0 <= x && x < m_dim);
     }
-    
+  body{    
     byte y = 0;
     while(y < m_dim && get(x, y) == BLANK){
       y++;
@@ -229,7 +254,10 @@ struct Field
   }
 
   bool isEmpty(int x)
-  {
+    in{
+      assert(0 <= x && x < m_dim);
+    }
+  body{
     if(get(x, 0) == BLANK) return true;
     else return false;
   }
@@ -246,7 +274,7 @@ struct Field
 
   unittest
   {
-    // Field fd = Field(6);
+    Field fd = Field(6);
     // UI cui = new CUI();
     // fd.put(2);
     // cui.display(fd);
