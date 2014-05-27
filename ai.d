@@ -1,6 +1,7 @@
 import std.algorithm, std.conv, std.math, std.random, std.datetime, std.c.stdlib;
 import std.stdio;
 import field, place;
+import exception;
 import ui;
 
 alias Place[int] Status;
@@ -28,6 +29,10 @@ class AI
 
   void setNumPlayout(int num_playout)
   {
+    if(num_playout <= 0){
+      throw new NonPositiveException("Non positive error",
+				     num_playout);
+    }
     this.num_playout = num_playout;
   }
 

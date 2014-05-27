@@ -2,8 +2,7 @@ import std.conv, std.string, std.getopt, std.format,
   std.array, std.c.stdlib;
 import std.stdio;
 import field;
-import ai;
-import ui;
+import ai, ui, exception;
 
 void main(string[] args)
 {
@@ -88,6 +87,7 @@ void main(string[] args)
       }else if(fd.isFull()){
       	ui.output("Draw!");
       	fd.clear();
+	ui.output("Press any key...");
       	readln();
       	ui.display(fd);
       }
@@ -99,7 +99,11 @@ void main(string[] args)
       break;
     case "dim":
       if(cmd.length == 2){
-	fd.setDim(to!int(cmd[1]));
+	try{
+	  fd.setDim(to!int(cmd[1]));
+	}catch(NonPositiveException e){
+	  break;
+	}
 	ui.display(fd);
       }else{
 	ui.output("Wrong number of argument.");
@@ -107,7 +111,11 @@ void main(string[] args)
       break;
     case "po":
       if(cmd.length == 2){
-	ai.setNumPlayout(to!int(cmd[1]));
+	try{
+	  ai.setNumPlayout(to!int(cmd[1]));
+	}catch(NonPositiveException e){
+	  break;
+	}
       }else{
 	ui.output("Wrong number of argument.");
       }

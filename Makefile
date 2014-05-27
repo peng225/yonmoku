@@ -5,7 +5,7 @@ FINAL_CFLAGS = -unittest -gc -m64 -w -wi -O
 # CFLAGS = -unittest -main -g -m64 -w -wi -O -c
 # FINAL_CFLAGS = -unittest -main -g -m64 -w -wi -O
 BINARY = yonmoku
-OBJS = field.o ai.o ui.o place.o
+OBJS = field.o ai.o ui.o place.o exception.o
 COMPILE = dmd $(CFLAGS)
 
 all: $(BINARY)
@@ -23,6 +23,9 @@ ui.o: ui.d
 	$(COMPILE) $<
 
 place.o: place.d
+	$(COMPILE) $<
+
+exception.o: exception.d
 	$(COMPILE) $<
 
 test: $(OBJS)

@@ -1,32 +1,9 @@
 import std.c.stdlib, std.algorithm, std.conv,
   std.container, std.random, std.exception;
 import std.stdio;
+import exception;
 
 enum{BLANK, RED, YELLOW};
-
-class OutOfFieldException : Exception
-{
-  this(string s, int x){
-    super(s);
-    writefln("%s : %s is out of field.", s, x);
-  }
-}
-
-class FullColumnException : Exception
-{
-  this(string s, int x){
-    super(s);
-    writefln("%s : %s-th colum is already full.", s, x);
-  }
-}
-
-class NoHistoryException : Exception
-{
-  this(string s){
-    super(s);
-    writefln("%s : There is no history any more.", s);
-  }
-}
 
 struct Field
 {
@@ -46,20 +23,6 @@ struct Field
     current_top[] = m_dim;
     NUM_MOKU = 4;
   }
-
-  // hash_t toHash(){
-  //   // return 0;
-  //   hash_t hash = 0;
-  //   Random gen;
-  //   ulong land_range = m_dim^^4;
-  //   for(int i = 0; i < m_dim; i++){
-  //     for(int j = 0; j < m_dim; j++){
-  // 	hash += get(i, j) * uniform(0, land_range, gen);
-  //     }
-  //   }
-  //   return hash;
-  //   // return reduce!("a + b")(0, field_body);
-  // }
 
   bool opEquals(ref const Field o)
   {
@@ -96,7 +59,12 @@ struct Field
   @property int dim(){return m_dim;}
   @property int turn(){return m_turn;}
 
-  void setDim(int m_dim){
+  void setDim(int m_dim)
+  {
+    if(m_dim <= 0){
+      throw new NonPositiveException("Non positive error",
+				     m_dim);
+    }
     this.m_dim = m_dim;
     field_body.length = this.m_dim^^2;
     clear();
