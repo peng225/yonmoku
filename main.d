@@ -5,17 +5,39 @@ import ai, ui, exception;
 
 void main(string[] args)
 {
+  enum Player{PERSON, COM}
   int dim = 6;
-  int po = 10000;
+  int numpo = 10000;
   getopt(args,
 	 "d",  &dim,
-	 "p",  &po
+	 "p",  &numpo
 	 );
   
   Field fd = Field(dim);
-  AI ai =  new AI(po);
+  AI ai =  new AI(numpo);
   UI ui = new CUI();  
-  ui.display(fd);  
+  ui.display(fd);
+
+  auto whoWon = delegate(int x, Player p)
+    {
+      if(fd.isWin(x)){
+	if(p == Player.PERSON){
+	  ui.output("Player Win!");
+	}else{
+	  ui.output("Computer Win!");
+	}
+	fd.clear();
+	ui.output("Press any key...");
+	ui.input();
+	ui.display(fd);
+      }else if(fd.isFull()){
+	ui.output("Draw!");
+	fd.clear();
+	ui.input();
+	ui.display(fd);
+      }
+    };
+  
   while(true){
     string[] cmd = ui.input();
     while(cmd.length == 0){
@@ -35,18 +57,7 @@ void main(string[] args)
 	break;
       }
       ui.display(fd);
-      if(fd.isWin(to!int(cmd[1]))){
-	ui.output("Player Win!");	
-	fd.clear();
-	ui.output("Press any key...");
-	ui.input();
-	ui.display(fd);
-      }else if(fd.isFull()){
-	ui.output("Draw!");
-	fd.clear();
-	ui.input();
-	ui.display(fd);
-      }
+      whoWon(to!int(cmd[1]), Player.PERSON);
       break;
     case "unput" :
       try{
@@ -77,19 +88,7 @@ void main(string[] args)
       formattedWrite(outstr, "Chose %s.", dec.x);
       ui.output(outstr.data);
       ui.display(fd);
-      if(fd.isWin(dec.x)){
-      	ui.output("Computer Win!");
-      	fd.clear();
-      	ui.output("Press any key...");
-	ui.input();
-      	ui.display(fd);
-      }else if(fd.isFull()){
-      	ui.output("Draw!");
-      	fd.clear();
-	ui.output("Press any key...");
-	ui.input();
-      	ui.display(fd);
-      }
+      whoWon(dec.x, Player.COM);
       break;
     case "turn":
       auto outstr = appender!string();
@@ -108,7 +107,7 @@ void main(string[] args)
 	ui.output("Wrong number of argument.");
       }
       break;
-    case "po":
+    case "numpo":
       if(cmd.length == 2){
 	try{
 	  ai.setNumPlayout(to!int(cmd[1]));
