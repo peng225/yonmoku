@@ -1,6 +1,5 @@
 import std.conv, std.string, std.getopt, std.format,
   std.array, std.c.stdlib;
-import std.stdio;
 import field;
 import ai, ui, exception;
 
@@ -40,12 +39,12 @@ void main(string[] args)
 	ui.output("Player Win!");	
 	fd.clear();
 	ui.output("Press any key...");
-	readln();
+	ui.input();
 	ui.display(fd);
       }else if(fd.isFull()){
 	ui.output("Draw!");
 	fd.clear();
-	readln();
+	ui.input();
 	ui.display(fd);
       }
       break;
@@ -82,13 +81,13 @@ void main(string[] args)
       	ui.output("Computer Win!");
       	fd.clear();
       	ui.output("Press any key...");
-      	readln();
+	ui.input();
       	ui.display(fd);
       }else if(fd.isFull()){
       	ui.output("Draw!");
       	fd.clear();
 	ui.output("Press any key...");
-      	readln();
+	ui.input();
       	ui.display(fd);
       }
       break;

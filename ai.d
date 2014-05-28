@@ -1,5 +1,4 @@
 import std.algorithm, std.conv, std.math, std.random, std.datetime, std.c.stdlib;
-import std.stdio;
 import field, place;
 import exception;
 import ui;

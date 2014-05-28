@@ -1,6 +1,5 @@
 import std.c.stdlib, std.algorithm, std.conv,
   std.container, std.random, std.exception;
-import std.stdio;
 import exception;
 
 enum{BLANK, RED, YELLOW};
