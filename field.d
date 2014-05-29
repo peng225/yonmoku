@@ -137,85 +137,105 @@ struct Field
       return false;
     }
 
-    byte turn = get(x, y);
-    
+    byte color = get(x, y);
+
+    bool result;
+
     // 列のチェック
-    bool inCheck = false;
-    int count = 0;
-    for(int i = 0; i < m_dim; i++){
-      if(!inCheck && get(x, i) == turn){
-	inCheck = true;
-	count++;
-      }else if(inCheck && get(x, i) != turn){
-	if(count == NUM_MOKU) return true;
-	inCheck = false;
-	count = 0;
-      }else if(inCheck && get(x, i) == turn){
-	count++;	
-      }
-    }
-    if(count == NUM_MOKU){
-      return true;
-    }
+    result = findFour(x, 0, false, true, false, false, 0, 0, 0, color);
+    if(result) return result;
     
     // 行のチェック
-    inCheck = false;
-    count = 0;
-    for(int i = 0; i < m_dim; i++){
-      if(!inCheck && get(i, y) == turn){
-    	inCheck = true;
-    	count++;
-      }else if(inCheck && get(i, y) != turn){
-    	if(count == NUM_MOKU) return true;
-    	inCheck = false;
-    	count = 0;
-      }else if(inCheck && get(i, y) == turn){
-    	count++;
-      }
-    }
-    if(count == NUM_MOKU){
-      return true;
-    }
+    result = findFour(0, y, true, false, false, false, 0, 0, 0, color);
+    if(result) return result;
+    
+    // 斜め（左上から右下）のチェック
+    result = findFour(x, y, true, true, false, false, abs(x - y),
+		      -min(x, y), -min(x, y), color);
+    if(result) return result;
+    
+    // 斜め（左下から右上）のチェック
+    result = findFour(x, y, true, true, false, true, abs(x - (dim - y - 1)),
+		      -min(x, m_dim - y - 1), min(x, m_dim - y - 1), color);
+    if(result) return result;
+    
+    // 列のチェック
+    // bool inCheck = false;
+    // int count = 0;
+    // for(int i = 0; i < m_dim; i++){
+    //   if(!inCheck && get(x, i) == turn){
+    // 	inCheck = true;
+    // 	count++;
+    //   }else if(inCheck && get(x, i) != turn){
+    // 	if(count == NUM_MOKU) return true;
+    // 	inCheck = false;
+    // 	count = 0;
+    //   }else if(inCheck && get(x, i) == turn){
+    // 	count++;	
+    //   }
+    // }
+    // if(count == NUM_MOKU){
+    //   return true;
+    // }
+    
+    // // 行のチェック
+    // inCheck = false;
+    // count = 0;
+    // for(int i = 0; i < m_dim; i++){
+    //   if(!inCheck && get(i, y) == turn){
+    // 	inCheck = true;
+    // 	count++;
+    //   }else if(inCheck && get(i, y) != turn){
+    // 	if(count == NUM_MOKU) return true;
+    // 	inCheck = false;
+    // 	count = 0;
+    //   }else if(inCheck && get(i, y) == turn){
+    // 	count++;
+    //   }
+    // }
+    // if(count == NUM_MOKU){
+    //   return true;
+    // }
 
     // 斜め（左上から右下）のチェック
-    inCheck = false;
-    count = 0;
-    int offset = min(x, y);
-    for(int i = 0; i < m_dim - abs(x - y); i++){
-      if(!inCheck && get(x + i - offset, y + i - offset) == turn){
-	inCheck = true;
-	count++;
-      }else if(inCheck && get(x + i - offset, y + i - offset) != turn){
-	if(count == NUM_MOKU) return true;
-	inCheck = false;
-	count = 0;
-      }else if(inCheck && get(x + i - offset, y + i - offset) == turn){
-    	  count++;
-      }
-    }
-    if(count == NUM_MOKU){
-      return true;
-    }
+    // inCheck = false;
+    // count = 0;
+    // int offset = min(x, y);
+    // for(int i = 0; i < m_dim - abs(x - y); i++){
+    //   if(!inCheck && get(x + i - offset, y + i - offset) == turn){
+    // 	inCheck = true;
+    // 	count++;
+    //   }else if(inCheck && get(x + i - offset, y + i - offset) != turn){
+    // 	if(count == NUM_MOKU) return true;
+    // 	inCheck = false;
+    // 	count = 0;
+    //   }else if(inCheck && get(x + i - offset, y + i - offset) == turn){
+    // 	  count++;
+    //   }
+    // }
+    // if(count == NUM_MOKU){
+    //   return true;
+    // }
 
-    // 斜め（左下から右上）のチェック
-    inCheck = false;
-    count = 0;
-    offset = min(x, m_dim - y - 1);
-    for(int i = 0; i < m_dim - abs(x - (dim - y - 1)); i++){
-      if(!inCheck && get(x + i - offset, y - i + offset) == turn){
-	inCheck = true;
-	count++;
-      }else if(inCheck && get(x + i - offset, y - i + offset) != turn){
-	if(count == NUM_MOKU) return true;
-	inCheck = false;
-	count = 0;
-      }else if(inCheck && get(x + i - offset, y - i + offset) == turn){
-	count++;
-      }
-    }
-    if(count == NUM_MOKU){
-      return true;
-    }
+    // // 斜め（左下から右上）のチェック
+    // inCheck = false;
+    // count = 0;
+    // offset = min(x, m_dim - y - 1);
+    // for(int i = 0; i < m_dim - abs(x - (dim - y - 1)); i++){
+    //   if(!inCheck && get(x + i - offset, y - i + offset) == turn){
+    // 	inCheck = true;
+    // 	count++;
+    //   }else if(inCheck && get(x + i - offset, y - i + offset) != turn){
+    // 	if(count == NUM_MOKU) return true;
+    // 	inCheck = false;
+    // 	count = 0;
+    //   }else if(inCheck && get(x + i - offset, y - i + offset) == turn){
+    // 	count++;
+    //   }
+    // }
+    // if(count == NUM_MOKU){
+    //   return true;
+    // }
     
     return false;
   }
@@ -237,6 +257,48 @@ struct Field
       }
     }
     return true;
+  }
+
+  template direction(int n){
+    static if(n == 0){
+      int xi = x;
+      int yi = i;
+    }else{
+      int xi = i;
+      int yi = y;
+    }
+  }
+  
+  private bool findFour(int x, int y, bool isXI, bool isYI,
+			bool isXINeg, bool isYINeg,
+			int loopOffset,
+			int getXOffset, int getYOffset,
+			byte color)
+  {
+    bool inCheck = false;
+    int count = 0;	
+    for(int i = 0; i < m_dim - loopOffset; i++){
+      int xi = x + (isXI ? i : 0) * (isXINeg ? -1 : 1)
+	+ getXOffset;
+      int yi = y + (isYI ? i : 0) * (isYINeg ? -1 : 1)
+	+ getYOffset;
+      if(!inCheck && get(xi, yi) == color){
+	inCheck = true;
+	count++;
+      }else if(inCheck && get(xi, yi) != color){
+	if(count == NUM_MOKU){
+	  return true;
+	}
+	inCheck = false;
+	count = 0;
+      }else if(inCheck && get(xi, yi) == color){
+	count++;	
+      }
+    }
+    if(count == NUM_MOKU){
+      return true;
+    }
+    return false;
   }
 
   unittest
