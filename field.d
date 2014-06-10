@@ -276,11 +276,13 @@ struct Field
 			byte color)
   {
     bool inCheck = false;
-    int count = 0;	
+    int count = 0;
+    int xi;
+    int yi;
     for(int i = 0; i < m_dim - loopOffset; i++){
-      int xi = x + (isXI ? i : 0) * (isXINeg ? -1 : 1)
+      xi = x + (isXI ? i : 0) * (isXINeg ? -1 : 1)
 	+ getXOffset;
-      int yi = y + (isYI ? i : 0) * (isYINeg ? -1 : 1)
+      yi = y + (isYI ? i : 0) * (isYINeg ? -1 : 1)
 	+ getYOffset;
       if(!inCheck && get(xi, yi) == color){
 	inCheck = true;
